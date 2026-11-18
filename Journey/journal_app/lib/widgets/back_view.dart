@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:journal_app/chat_managers/chat_manager.dart';
+import 'package:journal_app/chat_models/journal_entry.dart';
 import 'package:journal_app/database/plan_db.dart';
 import 'package:journal_app/datetime/date_time.dart';
+import 'package:journal_app/screens/journal_screen.dart';
 import 'package:journal_app/screens/plan_screen.dart';
 import 'package:journal_app/widgets/alert_box.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -9,9 +13,11 @@ class BackView extends StatefulWidget {
   const BackView({
     super.key,
     required this.today,
+    required this.chatManager,
   });
 
   final DateTime today;
+  final ChatManager chatManager;
 
   @override
   State<BackView> createState() => _BackViewState();
@@ -19,14 +25,15 @@ class BackView extends StatefulWidget {
 
 class _BackViewState extends State<BackView> {
   DateTime today = DateTime.now();
-  PlanDataBase checkPlanDB = PlanDataBase();
+  //PlanDataBase checkPlanDB = PlanDataBase();
+  late final JournalEntry _journalEntry;
 
   @override
   void initState() {
     super.initState();
     today = DateTime.now();
     nowTime = today;
-    checkPlanDB.loadPlanData();
+    // checkPlanDB.loadPlanData();
   }
 
   bool dataCheck = false;
@@ -41,6 +48,36 @@ class _BackViewState extends State<BackView> {
 
   void cancelDialogBox() {
     Navigator.of(context).pop();
+  }
+
+  JournalEntry? _getJournalForDay(DateTime day) {
+    final dayStr = DateFormat('yyyy-MM-dd').format(day);
+
+    try {
+      final session = widget.chatManager.sessions.firstWhere(
+          (s) => DateFormat('yyyy-MM-dd').format(s.createdAt) == dayStr);
+      return session.journalEntry;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  void _showJournal() {
+    final journal = _getJournalForDay(today);
+
+    if (journal == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("No journal entry for this day")),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => JournalScreen(journal: journal),
+      ),
+    );
   }
 
   @override
@@ -105,31 +142,7 @@ class _BackViewState extends State<BackView> {
               ),
             ),
             GestureDetector(
-              onTap: () {
-                for (int i = 0; i < checkPlanDB.todaysPlanList.length; i++) {
-                  if (convertDateTimeToString(nowTime) ==
-                      checkPlanDB.todaysPlanList[i][0]) {
-                    dataCheck = false;
-                    selectionIndex = i;
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (e) => const PlanScreen(),
-                      ),
-                    );
-                    break;
-                  } else {
-                    dataCheck = true;
-                  }
-                }
-                if (dataCheck == true) {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertBox(onClose: cancelDialogBox);
-                      });
-                }
-              },
+              onTap: _showJournal,
               child: Container(
                 height: 40,
                 alignment: Alignment.center,
@@ -138,7 +151,7 @@ class _BackViewState extends State<BackView> {
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.circular(12)),
                 child: const Text(
-                  'Show info',
+                  'Show Journal',
                   style: TextStyle(
                       color: Colors.white, fontWeight: FontWeight.w600),
                 ),

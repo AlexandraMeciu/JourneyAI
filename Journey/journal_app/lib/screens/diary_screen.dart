@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:journal_app/chat_managers/chat_manager.dart';
 import 'package:journal_app/utilities/data_saved.dart';
 import 'package:journal_app/widgets/actions_buttons.dart';
 import 'package:journal_app/widgets/ultra_background.dart';
@@ -17,6 +19,7 @@ class DiaryMain extends StatefulWidget {
 
 class _DiaryMainState extends State<DiaryMain> with TickerProviderStateMixin {
   DateTime today = DateTime.now();
+
   late AnimationController controller;
 
   bool isFrontView = true;
@@ -95,7 +98,10 @@ class _DiaryMainState extends State<DiaryMain> with TickerProviderStateMixin {
                                 : Transform(
                                     transform: Matrix4.rotationY(pi),
                                     alignment: Alignment.center,
-                                    child: BackView(today: today)),
+                                    child: BackView(
+                                      today: today,
+                                      chatManager: context.read<ChatManager>(),
+                                    )),
                           );
                         }),
                   ],

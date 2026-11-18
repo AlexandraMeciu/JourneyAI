@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:journal_app/ai/ai_service.dart';
+import 'package:journal_app/chat_managers/chat_manager.dart';
 import 'package:journal_app/chat_models/chat_message.dart';
 import 'package:journal_app/chat_models/chat_session.dart';
 import 'package:journal_app/chat_models/journal_entry.dart';
@@ -9,6 +11,7 @@ import 'package:journal_app/screens/carousel_presentation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/welcome_screen.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   await Hive.initFlutter();
@@ -42,7 +45,19 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(const MyApp());
+  // runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) =>
+              ChatManager(AiService()), // make sure AiService is imported
+        ),
+        // other providers...
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
