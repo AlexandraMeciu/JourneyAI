@@ -2,12 +2,8 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:journal_app/datetime/date_time.dart';
 import 'package:journal_app/main.dart';
-import 'package:journal_app/revenuecat/constant.dart';
-import 'package:journal_app/revenuecat/feature_item.dart';
-import 'package:journal_app/revenuecat/paywall_screen.dart';
 import 'package:journal_app/utilities/data_saved.dart';
 import 'package:journal_app/widgets/ultra_background.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -329,80 +325,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   ],
                 ),
               ),
-              SizedBox(
-                height: 30,
-              ),
-              if (!isPremium)
-                Container(
-                  //.        width: 400,
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          color: Colors.blueGrey.withAlpha(145), width: 1.5),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Column(
-                    children: [
-                      Text(
-                        "Premium Version",
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleLarge
-                            ?.copyWith(color: Colors.orange[800]),
-                        textAlign: TextAlign.start,
-                      ),
-                      SizedBox(height: 8),
-                      FeatureItem("Guided Journaling."),
-                      FeatureItem("Unlimited habits."),
-                      FeatureItem("Unlimited priorities."),
-                      FeatureItem("Unlimited goals."),
-                      FeatureItem("Export your journals to PDF."),
-                      Text(
-                          "Try 14 day free trial. Cancel anytime, no penalties or fees."),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blueGrey.withAlpha(130),
-                            foregroundColor: Colors.blueGrey,
-                            padding: EdgeInsetsGeometry.symmetric(
-                                vertical: 10, horizontal: 30),
-                            shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadiusGeometry.circular(15))),
-                        child: Text(
-                          "Try For Free",
-                          style: TextStyle(fontSize: 20, color: Colors.white),
-                        ),
-                        onPressed: () async {
-                          if (!isPremium) {
-                            Offerings? offerings;
-                            try {
-                              offerings = await Purchases.getOfferings();
-                            } catch (e) {
-                              debugPrint('Error fetching offerings: $e');
-                            }
-
-                            if (offerings != null &&
-                                offerings.current != null) {
-                              await showModalBottomSheet(
-                                  useRootNavigator: true,
-                                  isDismissible: true,
-                                  isScrollControlled: true,
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    checkPremium();
-                                    return PaywallScreen(
-                                        offering: offerings!.current!);
-                                  });
-                            }
-                            return;
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                )
             ],
           ),
         ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:journal_app/chat_managers/chat_manager.dart';
 import 'package:journal_app/chat_models/chat_session.dart';
-import 'package:journal_app/database/data.dart';
 import 'package:journal_app/widgets/ultra_background.dart';
 
 class ChatHistoryScreen extends StatelessWidget {

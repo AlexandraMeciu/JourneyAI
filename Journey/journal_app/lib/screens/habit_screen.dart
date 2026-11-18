@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:journal_app/database/habit_db.dart';
-import 'package:journal_app/datetime/date_time.dart';
-import 'package:journal_app/revenuecat/constant.dart';
-import 'package:journal_app/revenuecat/purchase_api.dart';
 import 'package:journal_app/utilities/data_saved.dart';
 import 'package:journal_app/widgets/habit_tile.dart';
 import 'package:journal_app/widgets/month_summary.dart';
@@ -45,12 +42,6 @@ class _HabitScreenState extends State<HabitScreen> {
   }
 
   void createNewHabit() async {
-    if (!isPremium && db.todaysHabitList.length >= 3) {
-      PurchaseApi.showPurchasePanel(context);
-      checkPremium();
-      return;
-    }
-
     showDialog(
         // ignore: use_build_context_synchronously
         context: context,
@@ -148,7 +139,7 @@ class _HabitScreenState extends State<HabitScreen> {
                 onPressed: createNewHabit,
                 icon: Icon(Icons.add),
                 iconSize: 40,
-                color: (db.todaysHabitList.length >= 3 && !isPremium)
+                color: (db.todaysHabitList.length >= 3)
                     ? Colors.grey
                     : Colors.white,
               ),

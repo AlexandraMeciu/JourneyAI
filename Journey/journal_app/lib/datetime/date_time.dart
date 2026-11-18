@@ -1,7 +1,3 @@
-import 'package:journal_app/revenuecat/constant.dart';
-import 'package:purchases_flutter/models/customer_info_wrapper.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
-
 DateTime nowTime = DateTime.now();
 int selectionIndex = 0;
 bool firstUse = true;
@@ -49,13 +45,4 @@ String convertDateTimeToString(DateTime dateTime) {
 
   String yyyymmdd = year + month + day;
   return yyyymmdd;
-}
-
-void checkPremium() async {
-  CustomerInfo customerInfo = await Purchases.getCustomerInfo();
-  customerInfo.entitlements.all[entitlementID];
-  if (customerInfo.entitlements.all[entitlementID] != null &&
-      customerInfo.entitlements.all[entitlementID]?.isActive == true) {
-    isPremium = true;
-  }
 }

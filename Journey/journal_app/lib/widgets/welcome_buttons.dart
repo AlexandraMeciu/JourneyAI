@@ -8,8 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:journal_app/datetime/date_time.dart';
-import 'package:journal_app/revenuecat/constant.dart';
-import 'package:journal_app/revenuecat/paywall_screen.dart';
 import 'package:journal_app/widgets/native_dialog.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
@@ -102,72 +100,8 @@ class _WelcomeButtonsState extends State<WelcomeButtons> {
       );
       checkForInternetConnection();
     } else {
-      performMagic();
-    }
-  }
-
-  void performMagic() async {
-    CustomerInfo customerInfo = await Purchases.getCustomerInfo();
-    customerInfo.entitlements.all[entitlementID];
-
-    if (customerInfo.entitlements.all[entitlementID] != null &&
-        customerInfo.entitlements.all[entitlementID]?.isActive == true) {
-      /*    DateTime expirationDate = DateTime.parse(customerInfo
-          .entitlements.all[entitlementID]!.expirationDate
-          .toString());
-      DateTime now = DateTime.now().toUtc();
-      if (!isConnectedToTheInternet && now.isAfter(expirationDate)) {
-        await _showSubscriptionExpiredDialog();
-        return;
-      }*/
-      isPremium = true;
       Navigator.push(context, MaterialPageRoute(builder: (e) => widget.onTap!));
-    } else {
-      Offerings? offerings;
-
-      try {
-        offerings = await Purchases.getOfferings();
-      } on PlatformException catch (e) {
-        await showDialog(
-            context: context,
-            builder: (BuildContext context) => ShowDialogToDismiss(
-                  title: 'Error',
-                  content: e.message ?? "Offerings error",
-                  buttonText: 'OK',
-                ));
-      }
-
-      if (offerings == null || offerings.current == null) {
-        if (kDebugMode) {
-          print('No offerings');
-        }
-      } else {
-        await showModalBottomSheet(
-          useRootNavigator: true,
-          isDismissible: true,
-          isScrollControlled: true,
-          backgroundColor: Colors.black,
-          context: context,
-          builder: (BuildContext context) {
-            return StatefulBuilder(
-                builder: (BuildContext context, StateSetter setModalState) {
-              return PaywallScreen(offering: offerings!.current!);
-            });
-          },
-        );
-      }
     }
-  }
-
-  void checkPremium() async {
-    CustomerInfo customerInfo = await Purchases.getCustomerInfo();
-    customerInfo.entitlements.all[entitlementID];
-
-    if (customerInfo.entitlements.all[entitlementID] != null &&
-        customerInfo.entitlements.all[entitlementID]?.isActive == true) {
-      isPremium = true;
-    }
-    Navigator.push(context, MaterialPageRoute(builder: (e) => widget.onTap!));
   }
 
   @override
@@ -183,7 +117,7 @@ class _WelcomeButtonsState extends State<WelcomeButtons> {
           onPressed: () async {
             /* Navigator.push(
                 context, MaterialPageRoute(builder: (e) => widget.onTap!));*/
-            firstUse ? startApp() : checkPremium();
+            startApp();
           },
         ),
       ),

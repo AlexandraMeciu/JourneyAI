@@ -3,9 +3,6 @@ import "package:hive/hive.dart";
 import "package:journal_app/database/data.dart";
 import "package:journal_app/database/todo_db.dart";
 import "package:journal_app/database/todo_list_db.dart";
-import "package:journal_app/datetime/date_time.dart";
-import "package:journal_app/revenuecat/constant.dart";
-import "package:journal_app/revenuecat/purchase_api.dart";
 import "package:journal_app/screens/to_do_screen.dart";
 import "package:journal_app/utilities/data_saved.dart";
 import "package:journal_app/widgets/my_alert_box.dart";
@@ -40,12 +37,6 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
   }
 
   Future<void> createNewToList() async {
-    if (!isPremium && db_ToDo.toDoListClass.length >= 2) {
-      PurchaseApi.showPurchasePanel(context);
-      checkPremium();
-      return;
-    }
-
     showDialog(
         context: context,
         builder: (context) {
@@ -137,7 +128,7 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
                 onPressed: createNewToList,
                 icon: Icon(Icons.add),
                 iconSize: 40,
-                color: (db_ToDo.toDoListClass.length >= 2 && !isPremium)
+                color: (db_ToDo.toDoListClass.length >= 2)
                     ? Colors.grey
                     : Colors.white,
               )

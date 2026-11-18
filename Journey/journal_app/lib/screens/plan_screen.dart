@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:journal_app/database/plan_db.dart';
 import 'package:journal_app/datetime/date_time.dart';
-import 'package:journal_app/revenuecat/constant.dart';
-import 'package:journal_app/widgets/native_dialog.dart';
 import 'package:journal_app/widgets/ultra_background.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -409,21 +407,12 @@ class _PlanScreenState extends State<PlanScreen> {
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
               //_exportAsPDF();
-              if (isPremium) {
-                _exportAsPDF();
-              } else {
-                await showDialog(
-                    context: context,
-                    builder: (BuildContext context) => ShowDialogToDismiss(
-                        content:
-                            'Upgrade to Premium to be able to export your journal as PDF.',
-                        title: 'Upgrade Required',
-                        buttonText: 'OK'));
-              }
+
+              _exportAsPDF();
             },
             child: Icon(
               Icons.picture_as_pdf,
-              color: isPremium ? Colors.white : Colors.grey,
+              color: Colors.white,
             ),
           ),
         ),

@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:journal_app/database/data.dart';
 import 'package:journal_app/database/priorities_db.dart';
-import 'package:journal_app/datetime/date_time.dart';
-import 'package:journal_app/revenuecat/constant.dart';
-import 'package:journal_app/revenuecat/purchase_api.dart';
 import 'package:journal_app/utilities/app_colors.dart';
 import 'package:journal_app/widgets/my_alert_box.dart';
 import 'package:journal_app/widgets/todo_tile.dart';
@@ -35,12 +32,6 @@ class _PriorityScreenState extends State<PriorityScreen> {
   }
 
   Future<void> createNewPriority() async {
-    if (!isPremium && db_Priority.todayPrioritiesList.length >= 5) {
-      PurchaseApi.showPurchasePanel(context);
-      checkPremium();
-      return;
-    }
-
     showDialog(
         context: context,
         builder: (context) {
@@ -159,7 +150,7 @@ class _PriorityScreenState extends State<PriorityScreen> {
           },
           child: Icon(
             Icons.add,
-            color: (db_Priority.todayPrioritiesList.length >= 5 && !isPremium)
+            color: (db_Priority.todayPrioritiesList.length >= 5)
                 ? Colors.grey
                 : Colors.white,
           ),

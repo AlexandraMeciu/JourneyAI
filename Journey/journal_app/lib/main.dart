@@ -1,20 +1,14 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:journal_app/chat_models/chat_message.dart';
 import 'package:journal_app/chat_models/chat_session.dart';
 import 'package:journal_app/chat_models/journal_entry.dart';
 import 'package:journal_app/datetime/date_time.dart';
-import 'package:journal_app/revenuecat/constant.dart';
-import 'package:journal_app/revenuecat/store_config.dart';
 import 'package:journal_app/database/data.dart';
 import 'package:journal_app/screens/carousel_presentation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/welcome_screen.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
-import 'revenuecat/purchase_api.dart';
 
 Future<void> main() async {
   await Hive.initFlutter();
@@ -32,19 +26,6 @@ Future<void> main() async {
     firstUse = prefs.getBool('intro_status')!;
   }
 
-  if (Platform.isIOS || Platform.isMacOS) {
-    StoreConfig(
-      store: Store.appStore,
-      apiKey: appleApiKey,
-    );
-  } else if (Platform.isAndroid) {
-    const useAmazon = bool.fromEnvironment("amazon");
-    StoreConfig(
-      store: useAmazon ? Store.amazon : Store.playStore,
-      apiKey: useAmazon ? amazonApiKey : googleApiKey,
-    );
-  }
-
   AwesomeNotifications().initialize(
     null,
     [
@@ -60,8 +41,6 @@ Future<void> main() async {
   );
 
   WidgetsFlutterBinding.ensureInitialized();
-
-  await PurchaseApi.configureSDK();
 
   runApp(const MyApp());
 }
