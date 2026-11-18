@@ -109,6 +109,9 @@ class ChatManager extends ChangeNotifier {
     try {
       final response =
           await _aiService.sendMessage(messages: currentSession.messages);
+      if (kDebugMode) {
+        print("Response $response");
+      }
       _addMessage(role: MessageRole.assistant, content: response);
       _isLoading = false;
       notifyListeners();
