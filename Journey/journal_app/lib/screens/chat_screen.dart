@@ -118,10 +118,11 @@ class _ChatScreenState extends State<ChatScreen> {
                 icon: Icon(Icons.history)),
             IconButton(
                 onPressed: () async {
-                  if (_manager.currentSession.journalEntry == null) {
-                    await _manager.generateJournal;
-                  }
+                  /*  if (_manager.currentSession.journalEntry == null) {
+                    await _manager.generateJournal();
+                  }*/
 
+                  await _manager.generateJournal();
                   if (!mounted) return;
 
                   final journal = _manager.currentSession.journalEntry;
@@ -133,6 +134,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   }
 
                   if (!context.mounted) return;
+
                   Navigator.push(
                       context,
                       MaterialPageRoute(

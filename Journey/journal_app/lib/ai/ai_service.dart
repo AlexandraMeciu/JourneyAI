@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:journal_app/chat_models/chat_message.dart';
@@ -116,28 +117,42 @@ class AiService {
 
   Future<String> _sendRequest(
       {required List<Map<String, dynamic>> messages}) async {
-    final response = await http.post(Uri.parse(AIConfig.baseUrl),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer ${AIConfig.apiKey}",
-        },
-        body: jsonEncode({
-          "model": AIConfig.model,
-          "messages": messages,
-          "temperature": AIConfig.temperature,
-          "max_tokens": AIConfig.maxTokens,
-          // "think": false
-          "chat_template_kwargs": {
-            "enable_thinking": false,
-          }
-        }));
+    try {
+      final response = await http
+          .post(Uri.parse(AIConfig.baseUrl),
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer ${AIConfig.apiKey}",
+              },
+              body: jsonEncode({
+                "model": AIConfig.model,
+                "messages": messages,
+                "temperature": AIConfig.temperature,
+                "max_tokens": AIConfig.maxTokens,
+                // "think": false
+                "chat_template_kwargs": {
+                  "enable_thinking": false,
+                }
+              }))
+          .timeout(Duration(seconds: 300));
 
-    if (response.statusCode != 200) {
-      throw Exception(response.body);
+      if (response.statusCode != 200) {
+        throw Exception(response.body);
+      }
+      final json = jsonDecode(response.body);
+      final content = json["choices"]?[0]?["message"]?["content"];
+
+      if (content == null || content.toString().trim().isEmpty) {
+        throw Exception("The AI returned an empty response.");
+      }
+
+      return content.toString();
+    } catch (e, stackTrace) {
+      debugPrint("========== AI ERROR ==========");
+      debugPrint("Error: $e");
+      debugPrint("Stack trace: $stackTrace");
+      rethrow;
     }
-
-    final json = jsonDecode(response.body);
-    return json["choices"][0]["message"]["content"];
   }
 
   Future<String> sendMessage({required List<ChatMessage> messages}) async {
@@ -158,6 +173,12 @@ class AiService {
     for (final message in session.messages) {
       conversation.writeln("${message.role.name}: ${message.content}");
     }
+
+    // ← ADD THIS
+    debugPrint("========== CONVERSATION BEING SENT ==========");
+    debugPrint(conversation.toString());
+    debugPrint("Message count: ${session.messages.length}");
+    debugPrint("=============================================");
 
     final response = await _sendRequest(messages: [
       {

@@ -44,7 +44,7 @@ class JournalScreen extends StatelessWidget {
                 ),
                 _Section(
                   title: "Reflection",
-                  text: journal.gratitude,
+                  text: journal.reflection,
                 ),
                 SizedBox(
                   height: 24,
@@ -58,7 +58,7 @@ class JournalScreen extends StatelessWidget {
                 ),
                 _Section(
                   title: "Tomorrow",
-                  text: journal.gratitude,
+                  text: journal.tomorrow,
                 ),
                 SizedBox(
                   height: 40,
