@@ -95,6 +95,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     // final messages = _manager.session.messages;
+    final isLoading = _manager.isLoading;
     return UltraBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -116,30 +117,48 @@ class _ChatScreenState extends State<ChatScreen> {
                 },
                 icon: Icon(Icons.history)),
             IconButton(
-                onPressed: () async {
-                  /*  if (_manager.currentSession.journalEntry == null) {
+                onPressed: isLoading
+                    ? null
+                    : () async {
+                        /*  if (_manager.currentSession.journalEntry == null) {
                     await _manager.generateJournal();
                   }*/
 
-                  await _manager.generateJournal();
-                  if (!mounted) return;
+                        if (_manager.currentSession.messages.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Write something first")));
+                          return;
+                        }
 
-                  final journal = _manager.currentSession.journalEntry;
+                        await _manager.generateJournal();
+                        if (!mounted) return;
 
-                  if (journal == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Couldn't generate journal")));
-                    return;
-                  }
+                        final journal = _manager.currentSession.journalEntry;
 
-                  if (!context.mounted) return;
+                        if (journal == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text("Couldn't generate journal")));
+                          return;
+                        }
 
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => JournalScreen(journal: journal)));
-                },
-                icon: Icon(Icons.auto_awesome)),
+                        if (!context.mounted) return;
+
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) =>
+                                    JournalScreen(journal: journal)));
+                      },
+                icon: isLoading
+                    ? SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Icon(Icons.auto_awesome)),
           ],
         ),
         body: Column(

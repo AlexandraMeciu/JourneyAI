@@ -50,6 +50,14 @@ class _BackViewState extends State<BackView> {
     Navigator.of(context).pop();
   }
 
+  bool _hasJournal(DateTime day) {
+    final dayStr = DateFormat('yyyy-MM-dd').format(day);
+
+    return widget.chatManager.sessions.any((session) =>
+        DateFormat('yyyy-MM-dd').format(session.createdAt) == dayStr &&
+        session.journalEntry != null);
+  }
+
   JournalEntry? _getJournalForDay(DateTime day) {
     final dayStr = DateFormat('yyyy-MM-dd').format(day);
 
@@ -119,26 +127,39 @@ class _BackViewState extends State<BackView> {
                       color: Colors.white,
                     )),
                 calendarStyle: const CalendarStyle(
-                  weekendTextStyle: TextStyle(
-                    color: Color.fromARGB(255, 162, 153, 175),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  defaultTextStyle: TextStyle(
-                    fontSize: 16,
-                  ),
-                  selectedDecoration: BoxDecoration(
-                    color: Color.fromARGB(255, 159, 43, 255),
-                    shape: BoxShape.circle,
-                  ),
-                  outsideTextStyle: TextStyle(
-                      color: Color.fromARGB(144, 0, 0, 0), fontSize: 16),
-                  todayDecoration: BoxDecoration(
-                    color: Colors.deepPurpleAccent,
-                    shape: BoxShape.circle,
-                  ),
-                ),
+                    weekendTextStyle: TextStyle(
+                      color: Color.fromARGB(255, 162, 153, 175),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                    defaultTextStyle: TextStyle(
+                      fontSize: 16,
+                    ),
+                    selectedDecoration: BoxDecoration(
+                      color: Color.fromARGB(255, 159, 43, 255),
+                      shape: BoxShape.circle,
+                    ),
+                    outsideTextStyle: TextStyle(
+                        color: Color.fromARGB(144, 0, 0, 0), fontSize: 16),
+                    todayDecoration: BoxDecoration(
+                      color: Colors.deepPurpleAccent,
+                      shape: BoxShape.circle,
+                    ),
+                    markersMaxCount: 1),
                 onDaySelected: _onDaySelected,
+                calendarBuilders:
+                    CalendarBuilders(markerBuilder: (context, day, events) {
+                  if (_hasJournal(day)) {
+                    return Positioned(
+                        child: Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                          color: Colors.amberAccent, shape: BoxShape.circle),
+                    ));
+                  }
+                  return null;
+                }),
               ),
             ),
             GestureDetector(

@@ -254,7 +254,7 @@ class AiService {
     return JournalEntry(
         id: DateTime.now().microsecondsSinceEpoch.toString(),
         sessionId: session.id,
-        createdAt: DateTime.now(),
+        createdAt: session.createdAt,
         title: title,
         reflection: reflection.trim(),
         gratitude: gratitude.trim(),

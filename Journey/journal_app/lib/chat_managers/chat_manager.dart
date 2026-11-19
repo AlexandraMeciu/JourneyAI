@@ -21,6 +21,14 @@ class ChatManager extends ChangeNotifier {
   bool get isLoading => _isLoading;
   final ChatDataBase _chatDB = ChatDataBase();
 
+  bool _disposed = false;
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
   List<ChatSession> get sessions => _chatDB.sessions;
 
   Future<void> createNewSession() async {
@@ -125,13 +133,31 @@ class ChatManager extends ChangeNotifier {
   }
 
   Future<void> generateJournal() async {
-    final journal = await _aiService.generateJournal(_session);
-
-    _session.journalEntry = journal;
-
-    _chatDB.updateSession(_session);
-
+    if (_session.messages.isEmpty) {
+      debugPrint("Cannot generate journal entru: conversation is empty");
+      return;
+    }
+    _isLoading = true;
     notifyListeners();
+
+    try {
+      final journal = await _aiService.generateJournal(_session);
+      if (_disposed) return;
+
+      _session.journalEntry = journal;
+
+      _chatDB.updateSession(_session);
+
+      notifyListeners();
+    } catch (e) {
+      if (_disposed) return;
+      debugPrint("Failed to generate journal: $e");
+    } finally {
+      if (!_disposed) {
+        _isLoading = false;
+        notifyListeners();
+      }
+    }
 
     /* if (_session.messages.isEmpty) return;
 
